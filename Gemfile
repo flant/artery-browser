@@ -7,5 +7,4 @@ gemspec
 
 gem "rack-test"
 gem "rack", "~> 3.0", "< 3.1.0"
-gem "webrick"
 gem "rackup"

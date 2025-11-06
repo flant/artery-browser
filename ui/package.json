@@ -10,11 +10,19 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {
+    "@popperjs/core": "^2.11.8",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tailwindcss/typography": "^0.5.14",
     "@tsconfig/svelte": "^5.0.5",
     "@types/node": "^24.6.0",
+    "autoprefixer": "^10.4.20",
+    "flowbite": "^3.1.2",
+    "flowbite-svelte": "^1.23.0",
+    "flowbite-svelte-icons": "^3.0.0",
     "svelte": "^5.39.6",
     "svelte-check": "^4.3.2",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.4.9",
     "typescript": "~5.9.3",
     "vite": "npm:rolldown-vite@7.1.14"
   },

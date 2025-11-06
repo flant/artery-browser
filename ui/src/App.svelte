@@ -1,47 +1,55 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import logo from '/logo.svg'
-  import Counter from './lib/Counter.svelte'
+  import "./app.css";
+  import {Card, Navbar, NavBrand, DescriptionList, List} from "flowbite-svelte";
+
+  const fetchJson = async (url: string) => {
+     const response = await fetch(url);
+     return response.json();
+  }
 </script>
 
 <main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={logo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+   <Navbar>
+      <NavBrand href="/">
+         <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+             Artery Browser
+         </span>
+      </NavBrand>
+   </Navbar>
 
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+   {#await fetchJson('http://localhost:3000/artery/subscriptions')}
+      <p>Loading...</p>
+   {:then data}
+      {#each data as subscription}
+         <Card size="lg" class="p-4 text-center sm:p-8 md:p-10 m-2">
+            <div class="mr-2">
+               <code>{subscription.path}</code>
+            </div>
+            <List tag="dl" class="divide-y">
+               <div class="flex flex-row pb-3 place-content-between">
+                  <DescriptionList tag="dt">Service</DescriptionList>
+                  <DescriptionList tag="dd">{subscription.route.service}</DescriptionList>
+               </div>
+               <div class="flex flex-row pb-3 place-content-between">
+                  <DescriptionList tag="dt">Model</DescriptionList>
+                  <DescriptionList tag="dd">{subscription.route.model}</DescriptionList>
+               </div>
+               <div class="flex flex-row pb-3 place-content-between">
+                  <DescriptionList tag="dt">Action</DescriptionList>
+                <DescriptionList tag="dd">{subscription.route.action}</DescriptionList>
+               </div>
+               <div class="flex flex-row pb-3 place-content-between">
+                  <DescriptionList tag="dt">Plural</DescriptionList>
+                  <DescriptionList tag="dd">{subscription.route.plural}</DescriptionList>
+               </div>
+            </List>
+         </Card>
+      {/each}
+   {:catch error}
+      <p>{error.message}</p>
+   {/await}
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
+
 </style>

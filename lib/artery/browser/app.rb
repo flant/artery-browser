@@ -35,9 +35,28 @@ module Artery
       def call(env)
         router = Router.new(routing)
         %w[/].each do |starting_route|
-          router.add_route("GET", starting_route) do |_, urls|
+          router.add_route("GET", starting_route) do |_, _urls|
             [200, { "content-type" => "text/html;charset=utf-8" }, [INDEX_HTML]]
           end
+        end
+
+        router.add_route("GET", '/subscriptions') do |_, urls|
+          subscriptions = Artery.subscriptions.map do |route, listeners|
+            listeners.map do |listener|
+              {
+                path: route.to_s,
+                route: {
+                  service: route.service,
+                  model: route.model,
+                  action: route.action,
+                  plural: route.plural
+                },
+                listener: listener.info.attributes.merge('synchronize' => listener.synchronize?)
+              }
+            end
+          end
+
+          json(subscriptions.flatten)
         end
         router.handle(::Rack::Request.new(env))
       rescue Router::NoMatch
@@ -53,7 +72,7 @@ module Artery
       end
 
       def json(body)
-        [200, { "content-type" => "application/vnd.api+json" }, [JSON.dump(body.to_h)]]
+        [200, { "content-type" => "application/vnd.api+json" }, [JSON.dump(body)]]
       end
 
       def erb(template, **locals)
