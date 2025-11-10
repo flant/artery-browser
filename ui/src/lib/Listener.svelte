@@ -29,10 +29,10 @@
     <article class="p-4 m-2 border rounded-lg shadow bg-default">
         <heading class="flex justify-between">
             <h5 class="mb-4 text-xl font-medium">
-                {#if listener.synchronize }
-                    <ArrowDownOutline class="inline"></ArrowDownOutline>
-                {:else}
+                {#if listener.source }
                     <ArrowUpOutline class="inline"></ArrowUpOutline>
+                {:else}
+                    <ArrowDownOutline class="inline"></ArrowDownOutline>
                 {/if}
 
                 Subscription {listener.id}
@@ -48,12 +48,8 @@
                     <Input value={listener.id} readonly></Input>
                 </ButtonGroup>
                 <ButtonGroup class={propClass}>
-                    <InputAddon class="w-52">Subscriber</InputAddon>
-                    <Input value={listener.subscriber} readonly></Input>
-                </ButtonGroup>
-                <ButtonGroup class={propClass}>
-                    <InputAddon class="w-52">Latest Index</InputAddon>
-                    <Input type="number" bind:value={latest_index} readonly={!editing}></Input>
+                    <InputAddon class="w-52">Source</InputAddon>
+                    <Input value={listener.source} readonly></Input>
                 </ButtonGroup>
                 <ButtonGroup class={propClass}>
                     <InputAddon class="w-52">Service</InputAddon>
@@ -64,6 +60,10 @@
                     <Input value={listener.model} readonly></Input>
                 </ButtonGroup>
                 <ButtonGroup class={propClass}>
+                    <InputAddon class="w-52">Subscriber</InputAddon>
+                    <Input value={listener.subscriber} readonly></Input>
+                </ButtonGroup>
+                <ButtonGroup class={propClass}>
                     <InputAddon class="w-52">Synchronization Heartbeat</InputAddon>
                     <Input value={listener.synchronization_heartbeat} readonly></Input>
                 </ButtonGroup>
@@ -72,8 +72,14 @@
                     <Input value={listener.synchronization_in_progress} readonly></Input>
                 </ButtonGroup>
                 <ButtonGroup class={propClass}>
-                    <InputAddon class="w-52">Syncable</InputAddon>
-                    <Input value={listener.synchronize} readonly></Input>
+                    <InputAddon class="w-52">Latest Index</InputAddon>
+                    <Input type="number"
+                           inputmode="numeric"
+                           bind:value={latest_index} readonly={!editing}></Input>
+                </ButtonGroup>
+                <ButtonGroup class={propClass}>
+                    <InputAddon class="w-52">Latest Outgoing Index</InputAddon>
+                    <Input type="number" value={listener.latest_outgoing_index} readonly></Input>
                 </ButtonGroup>
             </div>
             <div class="w-1/2">

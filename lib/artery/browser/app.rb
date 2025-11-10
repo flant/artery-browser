@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "../browser"
-require "rack"
-require "json"
+require_relative '../browser'
+require 'rack'
+require 'json'
 
 module Artery
   module Browser
@@ -12,32 +12,31 @@ module Artery
       def self.build
         ::Rack::Builder.new do
           use Rack::Static,
-            urls:
-              %w[
+              urls:
+                %w[
                   index.html
                   logo.svg
-                  assets/index-Ntg3TtDJ.js
+                  assets/index-CFTHRyuc.js
                   assets/index-Dw-hdo5G.css
                   assets/validate-routes-Cx95rB3S.js
                 ].map { |f| ["/#{f}", f] }.to_h,
-            root: "#{__dir__}/../../../public"
+              root: "#{__dir__}/../../../public"
           run App.new
         end
       end
 
-      def initialize
-      end
+      def initialize; end
 
       def call(env)
         router = Router.new
         %w[/].each do |starting_route|
-          router.add_route("GET", starting_route) do |_params, _request|
-            [200, { "content-type" => "text/html;charset=utf-8" }, [INDEX_HTML]]
+          router.add_route('GET', starting_route) do |_params, _request|
+            [200, { 'content-type' => 'text/html;charset=utf-8' }, [INDEX_HTML]]
           end
         end
 
-        router.add_route("GET", '/subscriptions') do |_params, _request|
-          json(Artery.subscriptions.map do |route, listeners|
+        router.add_route('GET', '/subscriptions') do |_params, _request|
+          json((Artery.subscriptions || {}).map do |route, listeners|
             {
               path: route.to_s,
               service: route.service,
@@ -45,17 +44,20 @@ module Artery
               action: route.action,
               plural: route.plural,
               listeners: listeners.map do |listener|
-                listener.info.attributes.merge(synchronize: listener.synchronize?)
+                listener.info.attributes.merge(
+                  source: listener.source?,
+                  latest_outgoing_message_index: listener.latest_outgoing_message_index
+                )
               end
             }
           end)
         end
 
-        router.add_route("PUT", '/listeners/:listener_id') do |params, request|
+        router.add_route('PUT', '/listeners/:listener_id') do |params, request|
           listener = Artery.subscription_info_class.find(params.fetch('listener_id'))
           updates = JSON.parse(request.body.gets).slice('latest_index')
           listener.update!(updates)
-          Artery.subscriptions.each do |_route, listeners|
+          Artery.subscriptions.each_value do |listeners|
             listeners.each do |subscription_listener|
               subscription_listener.info.reload if subscription_listener.info == listener
             end
@@ -76,11 +78,11 @@ module Artery
       end
 
       def json(body)
-        [200, { "content-type" => "application/vnd.api+json" }, [JSON.dump(body)]]
+        [200, { 'content-type' => 'application/vnd.api+json' }, [JSON.dump(body)]]
       end
 
       def erb(template, **locals)
-        [200, { "content-type" => "text/html;charset=utf-8" }, [ERB.new(template).result_with_hash(locals)]]
+        [200, { 'content-type' => 'text/html;charset=utf-8' }, [ERB.new(template).result_with_hash(locals)]]
       end
 
       def res_version

@@ -6,7 +6,7 @@ module Artery
       NoMatch = Class.new(StandardError)
 
       class Route
-        NAMED_SEGMENTS_PATTERN = %r{\/([^\/]*):([^:$\/]+)}.freeze
+        NAMED_SEGMENTS_PATTERN = %r{/([^/]*):([^:$/]+)}
         private_constant :NAMED_SEGMENTS_PATTERN
 
         def initialize(request_method, pattern, &block)
@@ -18,8 +18,8 @@ module Artery
         def match(request)
           return unless request.request_method.eql?(request_method)
 
-          match_data = regexp.match(File.join("/", request.path_info))
-          match_data.named_captures.transform_values { |v| Rack::Utils.unescape(v) } if match_data
+          match_data = regexp.match(File.join('/', request.path_info))
+          match_data&.named_captures&.transform_values { |v| Rack::Utils.unescape(v) }
         end
 
         def call(params, request)
@@ -35,8 +35,8 @@ module Artery
         attr_reader :request_method, :pattern, :handler
       end
 
-      def initialize()
-        @routes = Array.new
+      def initialize
+        @routes = []
       end
 
       def add_route(request_method, pattern, &block)
@@ -46,7 +46,7 @@ module Artery
       def handle(request)
         routes.each do |route|
           route_params = route.match(request)
-          return(route.call(request.params.merge(route_params), request)) if route_params
+          return route.call(request.params.merge(route_params), request) if route_params
         end
         raise NoMatch
       end
