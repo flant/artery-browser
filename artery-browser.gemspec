@@ -42,7 +42,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rack', '~> 3.2'
 
+  spec.add_development_dependency 'ostruct', '~> 0.6.3'
   spec.add_development_dependency 'bundler', '~> 2.6.9'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rake', '~> 13.3'
+  spec.add_development_dependency 'rspec', '~> 3.13'
 end
