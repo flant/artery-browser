@@ -1,0 +1,9 @@
+ pre-commit:
+   parallel: true
+   jobs:
+     - name: gemlock
+       run: bundle install
+
+     - name: rubocop
+       glob: "*.rb"
+       run: bundle exec rubocop -A
